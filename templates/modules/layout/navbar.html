@@ -1,0 +1,228 @@
+<nav class="bg-white shadow-lg sticky top-0 z-50" id="mainNav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="/" class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Smos Store
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/" 
+                   class="nav-link text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                   data-page="home">
+                    Home
+                </a>
+                <a href="/cart" 
+                   class="nav-link text-gray-700 hover:text-blue-600 transition-colors font-medium relative"
+                   data-page="cart">
+                    <span class="flex items-center">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        Cart
+                    </span>
+                    <span v-if="cart_list.length > 0" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                        [[ cart_list.length ]]
+                    </span>
+                </a>
+                <a href="/about" 
+                   class="nav-link text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                   data-page="about">
+                    About
+                </a>
+                <a href="/contact" 
+                   class="nav-link text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                   data-page="contact">
+                    Contact
+                </a>
+            </div>
+
+            <!-- User Menu -->
+            <div class="flex items-center space-x-4">
+                {% if session.email %}
+                    <!-- Logged In User -->
+                    <div class="relative">
+                        <button onclick="toggleDropdown()" id="userMenuButton" 
+                                class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors font-medium focus:outline-none">
+                            <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md">
+                                {{ session.email[0].upper() }}
+                            </div>
+                            <span class="hidden md:block">{{ session.email.split('@')[0] }}</span>
+                            <svg id="dropdownIcon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdown" 
+                             class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50">
+                        
+                            <a href="/profile" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                </svg>
+                                My Orders
+                            </a>
+                            <hr class="my-2">
+                            <a href="/logout" class="block px-4 py-2 text-red-600 hover:bg-red-50 transition-colors flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Guest User -->
+                    <a href="/login" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all shadow-md hover:shadow-lg font-semibold">
+                        Login
+                    </a>
+                {% endif %}
+                
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" id="mobileMenuButton" class="md:hidden text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
+            <div class="flex flex-col space-y-3">
+                <a href="/" 
+                   class="mobile-nav-link px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors rounded-lg"
+                   data-page="home">
+                    Home
+                </a>
+                <a href="/cart" 
+                   class="mobile-nav-link px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors rounded-lg flex items-center justify-between"
+                   data-page="cart">
+                    <span>Cart</span>
+                    <span v-if="cart_list.length > 0" class="bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                        [[ cart_list.length ]]
+                    </span>
+                </a>
+                <a href="/about" 
+                   class="mobile-nav-link px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors rounded-lg"
+                   data-page="about">
+                    About
+                </a>
+                <a href="/contact" 
+                   class="mobile-nav-link px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors rounded-lg"
+                   data-page="contact">
+                    Contact
+                </a>
+                {% if session.email %}
+                    <hr class="my-2">
+                    <a href="/profile" 
+                       class="mobile-nav-link px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors rounded-lg"
+                       data-page="profile">
+                        Profile
+                    </a>
+                    <a href="/logout" class="px-4 py-2 text-red-600 hover:bg-red-50 transition-colors rounded-lg">
+                        Logout
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Dropdown functionality
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    const icon = document.getElementById('dropdownIcon');
+    
+    if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        dropdown.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Mobile menu functionality
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    if (mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.remove('hidden');
+    } else {
+        mobileMenu.classList.add('hidden');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('userDropdown');
+    const button = document.getElementById('userMenuButton');
+    
+    if (dropdown && button && !button.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.add('hidden');
+        const icon = document.getElementById('dropdownIcon');
+        if (icon) {
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+});
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(event) {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const button = document.getElementById('mobileMenuButton');
+    const nav = document.getElementById('mainNav');
+    
+    if (mobileMenu && button && !nav.contains(event.target)) {
+        mobileMenu.classList.add('hidden');
+    }
+});
+
+// Set active navigation item based on current page using Tailwind classes
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    
+    // Map paths to page names
+    let currentPage = 'home';
+    
+    if (currentPath === '/' || currentPath === '/home') {
+        currentPage = 'home';
+    } else if (currentPath.includes('/cart') || currentPath.includes('/checkout')) {
+        currentPage = 'cart';
+    } else if (currentPath.includes('/about')) {
+        currentPage = 'about';
+    } else if (currentPath.includes('/contact')) {
+        currentPage = 'contact';
+    } else if (currentPath.includes('/profile')) {
+        currentPage = 'profile';
+    }
+    
+    // Set active state for desktop nav using Tailwind classes
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        if (link.dataset.page === currentPage) {
+            // Remove default classes
+            link.classList.remove('text-gray-700');
+            // Add active classes
+            link.classList.add('text-blue-600', 'font-semibold', 'border-b-2', 'border-blue-600', 'pb-1');
+        }
+    });
+    
+    // Set active state for mobile nav using Tailwind classes
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileNavLinks.forEach(link => {
+        if (link.dataset.page === currentPage) {
+            // Remove default classes
+            link.classList.remove('text-gray-700', 'hover:bg-blue-50');
+            // Add active classes
+            link.classList.add('bg-blue-100', 'text-blue-600', 'font-semibold');
+        }
+    });
+});
+</script>

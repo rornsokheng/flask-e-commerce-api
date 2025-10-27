@@ -1,0 +1,108 @@
+{% extends "master.html" %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Profile Header -->
+        <div class="bg-white/80 backdrop-blur-md border border-white/50 rounded-3xl shadow-2xl p-8 mb-8">
+            <div class="flex items-center space-x-6">
+                <div class="w-24 h-24 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                    {{ user.fullname[0].upper() if user.fullname else user.email[0].upper() }}
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-3xl font-bold text-slate-800 mb-2">
+                        {{ user.fullname if user.fullname else 'User' }}
+                    </h1>
+                    <p class="text-slate-600 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                        </svg>
+                        {{ user.email }}
+                    </p>
+                    <p class="text-slate-500 text-sm mt-1">
+                        Member since {{ user.created_at.strftime('%B %Y') if user.created_at else 'N/A' }}
+                    </p>
+                </div>
+                <a href="/logout" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold">
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Order History -->
+        <div class="bg-white/80 backdrop-blur-md border border-white/50 rounded-3xl shadow-2xl p-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                <svg class="w-8 h-8 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+                Order History
+            </h2>
+
+            {% if orders %}
+                <div class="space-y-4">
+                    {% for order in orders %}
+                        <div class="border-2 border-slate-200 rounded-xl p-6 hover:border-blue-400 transition-all duration-200 bg-white/50">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="font-semibold text-slate-800 text-lg">
+                                        Order #{{ loop.index }}
+                                    </h3>
+                                    <p class="text-slate-600 text-sm mt-1">
+                                        {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') if order.created_at else 'N/A' }}
+                                    </p>
+                                </div>
+                                <span class="px-4 py-2 rounded-full text-sm font-semibold
+                                    {% if order.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif order.status == 'completed' %}bg-green-100 text-green-800
+                                    {% elif order.status == 'cancelled' %}bg-red-100 text-red-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {{ order.status.capitalize() }}
+                                </span>
+                            </div>
+
+                            {% if order.order_data and order.order_data.get('items') %}
+                                <div class="border-t border-slate-200 pt-4 space-y-3">
+                                    {% for item in order.order_data.get('items', []) %}
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center space-x-4">
+                                                {% if item.get('image') %}
+                                                    <img src="{{ item.get('image') }}" alt="{{ item.get('title', 'Product') }}" class="w-12 h-12 object-cover rounded-lg">
+                                                {% endif %}
+                                                <div>
+                                                    <p class="font-medium text-slate-800">{{ item.get('title', 'Unknown Product') }}</p>
+                                                    <p class="text-slate-600 text-sm">Qty: {{ item.get('qty', 1) }}</p>
+                                                </div>
+                                            </div>
+                                            <p class="font-semibold text-slate-800">${{ "%.2f"|format(item.get('price', 0) * item.get('qty', 1)) }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="border-t border-slate-200 mt-4 pt-4 flex justify-between items-center">
+                                <span class="text-slate-600 font-medium">Total Amount:</span>
+                                <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                    ${{ "%.2f"|format(order.total) }}
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <svg class="w-24 h-24 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold text-slate-600 mb-2">No Orders Yet</h3>
+                    <p class="text-slate-500 mb-6">You haven't placed any orders yet. Start shopping!</p>
+                    <a href="/" class="inline-flex items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        Start Shopping
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
