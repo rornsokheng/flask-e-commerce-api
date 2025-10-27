@@ -7,7 +7,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from pymongo import MongoClient
 from datetime import datetime
-from bson import ObjectId
 
 app = Flask(__name__)
 
