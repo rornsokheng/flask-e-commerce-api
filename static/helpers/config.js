@@ -130,9 +130,7 @@ createApp({
           },
 
           reqPostOrder: async function (payload) {
-               const orderEndpoint = this.isLoggedIn
-                    ? "http://127.0.0.1:5000/order-logged"
-                    : "http://127.0.0.1:5000/order"
+               const orderEndpoint = "http://127.0.0.1:5000/order-logged"
 
                return await axios
                     .post(orderEndpoint, payload)
@@ -182,12 +180,10 @@ createApp({
                          Swal.close()
                          this.handleAlertSuccess({
                               title: "ការបញ្ជារទិញទទួលបានជោគជ័យ🙏",
-                              description: this.isLoggedIn
-                                   ? "សូមអរគុណ!!! ចូលមើលការបញ្ជាទិញរបស់អ្នកនៅក្នុង Profile"
-                                   : "សូមអរគុណ!!!"
+                              description: "សូមអរគុណ!!! ចូលមើលការបញ្ជាទិញរបស់អ្នកនៅក្នុង Profile"
                          }).then(() => {
                               this.handleSetItem([])
-                              window.location.href = this.isLoggedIn ? "/profile" : "/"
+                              window.location.href = "/profile"
                          })
                     })
                     .catch((error) => {
@@ -208,21 +204,6 @@ createApp({
                     this.submitOrder()
                }
           },
-
-          promptLogin() {
-               Swal.fire({
-                    title: 'Create an Account?',
-                    text: 'Sign up to track your orders and get exclusive offers!',
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sign Up',
-                    cancelButtonText: 'Continue as Guest'
-               }).then((result) => {
-                    if (result.isConfirmed) {
-                         window.location.href = '/login'
-                    }
-               })
-          }
      }
 
 }).mount('#app')

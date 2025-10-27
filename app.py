@@ -18,6 +18,7 @@ db = client['shop_db']
 customers = db['customers']
 orders = db['orders']
 
+
 # Telegram config
 token = "8420874385:AAG89KOYSxNNtLQCqrT3Uwtc3U6IxKhikoQ"
 chatId = "1084261917"
@@ -30,10 +31,9 @@ sender_email = "rornsokhengnaa@gmail.com"
 password = "wadl utfb agpx mnih"
 
 
-# ============ Guard Routing ============
+#  ============ Nak ka pear route ============
 
 def login_required(f):
-    """Decorator to require login for routes"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'email' not in session:
@@ -44,7 +44,6 @@ def login_required(f):
 
 
 def guest_required(f):
-    """Decorator to prevent logged-in users from accessing auth pages"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'email' in session:
@@ -54,11 +53,10 @@ def guest_required(f):
     return decorated_function
 
 
-# ============ API ENDPOINT ============
+# ============ API Endpoint ============
 
 @app.route('/api/check-session')
 def check_session():
-    """Check if user is logged in - for Vue.js"""
     if 'email' in session:
         user = customers.find_one({'email': session['email']})
         return jsonify({
@@ -70,12 +68,11 @@ def check_session():
 
 
 
-# ============ PAGE ROUTE ============
+# ============ Page Route ============
 
 @app.get("/")
 @app.get("/home")
 def home():
-    """Home page with products from Fake Store API"""
     product_list = []
     api_url = 'https://fakestoreapi.com/products'
     try:
@@ -89,7 +86,6 @@ def home():
 
 @app.get("/product-detail/<int:pro_id>")
 def product_detail(pro_id):
-    """Product detail page"""
     product = {}
     api_url = f"https://fakestoreapi.com/products/{pro_id}"
     try:
@@ -105,35 +101,30 @@ def product_detail(pro_id):
 @app.get('/cart')
 @login_required
 def cart():
-    """Cart page"""
     return render_template('cart.html')
 
 
 @app.get('/checkout')
 @login_required
 def checkout():
-    """Checkout page"""
     return render_template('checkout.html')
 
 
 @app.get('/about')
 def about():
-    """About page"""
     return render_template('about.html')
 
 
 @app.get('/contact')
 def contact():
-    """Contact page"""
     return render_template('contact.html')
 
 
-# ============ AUTHENTICATION ROUTE ============
+# ============ Auth Route ============
 
 @app.route('/login', methods=['GET', 'POST'])
 @guest_required 
 def login():
-    """Login and Register page (auth.html)"""
     if request.method == 'POST':
         email = request.form.get('email')
         pwd = request.form.get('password')
@@ -159,7 +150,6 @@ def login():
 @app.route('/register', methods=['POST'])
 @guest_required  
 def register():
-    """User registration"""
     fullname = request.form.get('fullname')
     email = request.form.get('email')
     pwd = request.form.get('password')
@@ -193,7 +183,6 @@ def register():
 
 @app.route('/logout')
 def logout():
-    """User logout"""
     session.clear()
     flash('Logged out successfully', 'info')
     return redirect(url_for('home'))
@@ -202,7 +191,6 @@ def logout():
 @app.route('/profile')
 @login_required 
 def profile():
-    """User profile page with order history"""
     user = customers.find_one({'email': session['email']})
     
     if not user:
@@ -214,10 +202,9 @@ def profile():
     return render_template('profile.html', user=user, orders=user_orders)
 
 
-# ============ ORDER HELPER ============
+# ============ Order Helper ============
 
 def send_telegram_notification(order_data):
-    """Send order notification to Telegram"""
     try:
         data = order_data
         name = f"{data.get('customer', {}).get('firstName', '')} {data.get('customer', {}).get('lastName', '')}"
@@ -267,7 +254,6 @@ def send_telegram_notification(order_data):
 
 
 def send_order_email(order_data, total_price):
-    """Send order confirmation email"""
     try:
         data = order_data
         name = f"{data.get('customer', {}).get('firstName', '')} {data.get('customer', {}).get('lastName', '')}"
@@ -331,28 +317,9 @@ def send_order_email(order_data, total_price):
         return False
 
 
-# ============ ORDER ROUTE ============
-
-# @app.post("/order")
-# def create_order():
-#     """Create order for guest users (not saved to database)"""
-#     data = request.json
-#     if not data:
-#         return jsonify({"error": "Invalid data"}), 400
-
-#     telegram_success, total_price = send_telegram_notification(data)
-#     email_success = send_order_email(data, total_price)
-
-#     if telegram_success:
-#         return jsonify({"status": "success", "message": "Order placed successfully"})
-#     else:
-#         return jsonify({"status": "error", "message": "Failed to place order"}), 500
-
-
 @app.post("/order-logged")
 @login_required
 def create_order_logged():
-    """Create order for logged-in users (saves to database)"""
     data = request.json
     if not data:
         return jsonify({"error": "Invalid data"}), 400
@@ -377,7 +344,7 @@ def create_order_logged():
         return jsonify({"status": "error", "message": "Failed to place order"}), 500
 
 
-# ============ ERROR HANDLER ============
+# ============ Error Handler ============
 
 @app.errorhandler(404)
 def not_found(e):
