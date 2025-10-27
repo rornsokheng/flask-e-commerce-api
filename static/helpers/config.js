@@ -130,7 +130,7 @@ createApp({
           },
 
           reqPostOrder: async function (payload) {
-               const orderEndpoint = "http://127.0.0.1:5000/order-logged"
+               const orderEndpoint = "https://heng.apsara.host/order-logged"
 
                return await axios
                     .post(orderEndpoint, payload)
