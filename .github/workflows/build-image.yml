@@ -10,7 +10,7 @@ jobs:
 
     permissions:
       contents: read
-      packages: write  # needed for GHCR
+      packages: write  
       id-token: write
 
     steps:
